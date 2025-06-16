@@ -1,1 +1,77 @@
-<p>ta works!</p>
+<!-- <h4>Users list</h4> -->
+
+<!-- <ul *ngIf="users.length > 0; else loading">
+  <li *ngFor="let user of users"> -->
+    <!-- {{ user.firstName }} {{ user.lastName }} – {{ user.email }} -->
+      <!-- {{ user?.consulting_Doctor?.name }} - {{ user?.uniqueHealthIdentificationId?.uhid }} {{ user?.uniqueHealthIdentificationId?.patient_name }} {{ user?.uniqueHealthIdentificationId?.gender }}
+  </li>
+</ul> -->
+
+<!-- <ng-template #loading>
+  <p>Loading users...</p>
+</ng-template> -->
+
+<div class="container mt-3 position-relative d-flex">
+  <input type="text" class="form-control" placeholder="Search doctor" [(ngModel)]="searchTerm"
+    (input)="searchDoctor()" />
+  <ul *ngIf="filterDoctors.length > 0" class="list-group position-absolute w-100" style="z-index: 1000;">
+    <li class="list-group-item list-group-item-action" *ngFor="let doctor of filterDoctors"
+      (click)="selectDoctor(doctor)" style="cursor: pointer;">
+      {{ doctor }}
+    </li>
+  </ul>
+  <button class="btn btn-outline-dark" type="button">Search</button>
+</div>
+
+<table class="table table-bordered table-hover align-middle diagnosis-table">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>#</th>
+        <th>UHID</th>
+        <th>Patient Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Consulting Doctor</th>
+        <th>Created At</th>
+        <th>Date of Treatment</th>
+        <th>Email</th>
+        <th>PAN Card</th>
+        <th>Mobile No</th>
+        <th>Area</th>
+        <!-- <th>Action</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of users ; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ patient.uniqueHealthIdentificationId?.uhid }}</td>
+        <td style="cursor: pointer; color: blue;">
+          {{ patient.uniqueHealthIdentificationId?.patient_name }}
+        </td>
+        <td>{{ patient.uniqueHealthIdentificationId?.age }}</td>
+        <td>{{ patient.uniqueHealthIdentificationId?.gender }}</td>
+        <td>{{ patient.consulting_Doctor?.name }}</td>
+        <td>{{ patient.createdAt | date:'yyyy-MM-dd' }}</td>
+        <td>{{ patient.uniqueHealthIdentificationId?.dot }}</td>
+        <td>{{ patient.emailAddress }}</td>
+        <td>{{ patient.panCardNumber }}</td>
+        <td>{{ patient.uniqueHealthIdentificationId?.mobile_no }}</td>
+        <td>{{ patient.uniqueHealthIdentificationId?.area }}</td>
+         <!-- <td>
+          <i class="fa-solid fa-eye action-btn" (click)="viewPatient(patient._id)"></i>
+          <i class="fa-solid fa-pencil action-btn" (click)="editOpdcase(patient._id)"></i>
+          <i class="fa-solid fa-trash action-btn" (click)="deleteOpdcase(patient._id)"></i>
+        </td> -->
+      </tr>
+    </tbody>
+  </table>
+
+
+
+
+
+
+
+
+
+
