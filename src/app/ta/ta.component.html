@@ -11,6 +11,11 @@
   <p>Loading users...</p>
 </ng-template> -->
 
+
+
+
+
+<!-- ==> DOCTOR filter  -->
 <div class="container mt-3 position-relative d-flex">
   <input type="text" class="form-control" placeholder="Search doctor" [(ngModel)]="searchTerm"
     (input)="searchDoctor()" />
@@ -23,6 +28,22 @@
   <button class="btn btn-outline-dark" type="button">Search</button>
 </div>
 
+
+<!-- ==> CHART -->
+<div class="chart-container">
+  <div class="bar" *ngFor="let item of chartData">
+    <div class="bar-label">{{ item.doctor }}</div>
+    <div class="bar-visual" [style.width.%]="item.count * 10">
+      {{ item.count }}
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- ==> OPD table  -->
 <table class="table table-bordered table-hover align-middle diagnosis-table">
     <thead class="table-dark text-center">
       <tr>

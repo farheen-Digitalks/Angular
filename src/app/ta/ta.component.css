@@ -1,0 +1,23 @@
+.chart-container {
+    max-width: 800px;
+    margin: 20px auto;
+    font-family: sans-serif;
+}
+
+.bar {
+    margin-bottom: 12px;
+}
+
+.bar-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.bar-visual {
+    background-color: #2196F3;
+    color: white;
+    padding: 6px;
+    border-radius: 4px;
+    text-align: right;
+    transition: width 0.5s ease;
+}

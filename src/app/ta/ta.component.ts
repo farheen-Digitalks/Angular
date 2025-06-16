@@ -16,6 +16,8 @@ export class TaComponent {
   filterDoctors: any[] = [];
   allPatients: any[] = [];
 
+  chartData: { doctor: string; count: number }[] = [];
+
   constructor(private api: ApiService) {
     this.api.testApiCall();
   }
@@ -33,10 +35,12 @@ export class TaComponent {
     //   this.users = data.users;
     // });
 
+    //==> GET all OPD cases
     this.api.testApiCall().subscribe({
       next: (data: any) => {
         this.allPatients = data.outpatientCases;
         this.users = this.allPatients;
+        this.generateChartData();
 
         const doctorSet = new Set(
           this.allPatients
@@ -50,6 +54,21 @@ export class TaComponent {
         console.log(error);
       },
     });
+  }
+
+
+  //==> CHART of opd
+  generateChartData(): void {
+    const doctorMap = new Map<string, number>();
+    this.users.forEach((patient) => {
+      const doctor = patient.consulting_Doctor?.name || 'Unknown';
+      doctorMap.set(doctor, (doctorMap.get(doctor) || 0) + 1);
+    });
+
+    this.chartData = Array.from(doctorMap.entries()).map(([doctor, count]) => ({
+      doctor,
+      count,
+    }));
   }
 
   searchDoctor() {
