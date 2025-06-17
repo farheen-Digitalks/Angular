@@ -6,29 +6,26 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'https://hims-rest-api-1-ycxu.onrender.com/v1/OutpatientCase?page=1&limit=25';
+  private apiUrl =
+    'https://hims-rest-api-1-ycxu.onrender.com/v1/OutpatientCase';
   private baseUrl = 'https://hims-rest-api-1-ycxu.onrender.com/v1';
   private doctorParams = `${this.baseUrl}/outpatientCase/getByDoctorFilter`;
 
   constructor(private http: HttpClient) {}
 
-  // testApiCall() {
-  //   // return this.http.get('https://dummyjson.com/test', { observe: 'response' });
-  //   fetch('https://dummyjson.com/users')
-  //     .then((res) => res.json())
-  //     .then(console.log);
-  // }
-
-  testApiCall(): Observable<any> {
-    // return this.http.get('https://dummyjson.com/users');
-    return this.http.get(this.apiUrl);
+  testApiCall(page: number = 1, limit: number = 25): Observable<any> {
+    return this.http.get(`${this.apiUrl}?page=${page}&limit=${limit}`);
   }
 
-  getDoctorByFilter(doctorName: string): Observable<any>  {
+  getDoctorByFilter(doctorName: string): Observable<any> {
     let params = new HttpParams();
-    if(doctorName){
+    if (doctorName) {
       params = params.append('name', doctorName.trim());
     }
-    return this.http.get(this.doctorParams, {params});
+    return this.http.get(this.doctorParams, { params });
+  }
+
+  getUhid(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/uhid`);
   }
 }

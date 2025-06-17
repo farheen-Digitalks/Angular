@@ -16,7 +16,7 @@
 
 
 <!-- ==> DOCTOR filter  -->
-<div class="container mt-3 position-relative d-flex">
+<!-- <div class="container mt-3 position-relative d-flex">
   <input type="text" class="form-control" placeholder="Search doctor" [(ngModel)]="searchTerm"
     (input)="searchDoctor()" />
   <ul *ngIf="filterDoctors.length > 0" class="list-group position-absolute w-100" style="z-index: 1000;">
@@ -26,20 +26,77 @@
     </li>
   </ul>
   <button class="btn btn-outline-dark" type="button">Search</button>
-</div>
+</div> -->
+
+
 
 
 <!-- ==> CHART -->
-<div class="chart-container">
+<!-- <select [(ngModel)]="selectedFilter" (change)="filterByTime()">
+  <option value="all">All</option>
+  <option value="week">This Week</option>
+  <option value="month">This Month</option>
+  <option value="year">This Year</option>
+</select> -->
+
+
+<!-- <div class="chart-container">
   <div class="bar" *ngFor="let item of chartData">
     <div class="bar-visual" [style.height.%]="item.count * 10">
       {{ item.count }}
     </div>
     <div class="bar-label">{{ item.doctor }}</div>
   </div>
+</div> -->
+
+
+<!-- Wrapper for entire layout -->
+<div class="d-flex flex-row gap-4 p-3">
+
+  <!-- LEFT: Search and Filter -->
+  <div class="d-flex flex-column" style="width: 25%; min-width: 250px;">
+
+    <!-- Doctor Search -->
+    <div class="position-relative mb-3">
+      <input type="text" class="form-control" placeholder="Search doctor" [(ngModel)]="searchTerm"
+        (input)="searchDoctor()" />
+      <ul *ngIf="filterDoctors.length > 0" class="list-group position-absolute w-100" style="z-index: 1000;">
+        <li class="list-group-item list-group-item-action" *ngFor="let doctor of filterDoctors"
+          (click)="selectDoctor(doctor)" style="cursor: pointer;">
+          {{ doctor }}
+        </li>
+      </ul>
+      <button class="btn btn-sm btn-outline-dark mt-2" type="button" (click)="searchDoctor()">Search</button>
+    </div>
+
+    <!-- Dropdown styled as tab -->
+    <div class="border rounded p-2">
+      <label class="fw-bold d-block mb-1">Time Filter</label>
+      <select class="form-select form-select-sm" [(ngModel)]="selectedFilter" (change)="filterByTime()">
+        <option value="all">All</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+        <option value="year">This Year</option>
+      </select>
+    </div>
+  </div>
+
+  
+
+  <!-- RIGHT: Chart -->
+  <div class="flex-grow-1">
+    <div class="chart-container d-flex align-items-end gap-3" style="height: 400px;">
+      <div class="bar text-center" *ngFor="let item of chartData" style="flex: 1;">
+        <div class="bar-visual bg-primary text-white" [style.height.%]="item.count * 10"
+          style="transition: height 0.3s; display: flex; align-items: center; justify-content: center;">
+          {{ item.count }}
+        </div>
+        <div class="bar-label mt-1 small">{{ item.doctor }}</div>
+      </div>
+    </div>
+  </div>
+
 </div>
-
-
 
 
 
@@ -64,7 +121,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let patient of users ; let i = index">
+      <tr *ngFor="let patient of filteredUhidRecords ; let i = index">
         <td>{{ i + 1 }}</td>
         <td>{{ patient.uniqueHealthIdentificationId?.uhid }}</td>
         <td style="cursor: pointer; color: blue;">

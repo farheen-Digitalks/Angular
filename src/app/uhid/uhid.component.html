@@ -1,0 +1,50 @@
+<div class="table-responsive">
+  <table class="table table-bordered table-hover align-middle diagnosis-table">
+   <thead class="table-dark text-center" >
+      <tr>
+        <th>#</th>
+        <th>UHID</th>
+        <th>PATIENT NAME</th>
+        <th>GENDER</th>
+        <th>Age</th>
+        <th>DOB</th>
+        <th>DOR</th>
+        <th>TOR</th>
+        <th>MOBILE</th>
+        <th>AREA</th>
+        <th>PINCODE</th>
+        <!-- <th>ACTIONS</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let record of uhidRecords; let i = index">
+        <td>{{i + 1}}</td>
+        <td>{{ record.uhid }}</td>
+        <td> {{ record.patient_name }}</td>
+        <td>{{ record.gender }}</td>
+        <td>{{ record.age }}</td>
+        <td>{{ record.dob | date:'yyyy-MM-dd' }}</td>
+        <td>{{ record.dor | date:'yyyy-MM-dd' }}</td>
+        <td>{{ record.dot }}</td>
+        <td>{{ record.mobile_no }}</td>
+        <td>{{ record.area }}</td>
+        <td>{{ record.pincode }}</td>
+        <!-- <td>
+          <i class="fa-solid fa-eye action-btn" (click)="openBarcodePopup(i)"></i>
+          <i class="fa-solid fa-pencil action-btn" (click)="edituhid(record._id)"></i>
+          <i class="fa-solid fa-trash action-btn" (click)="deleteduhid(record._id)"></i> -->
+          <!-- Modal Trigger specific to each row -->
+          <!-- <div *ngIf="openIndex === i" class="modal-overlay">
+            <app-barcode-dialog [data]="record" (close)="closeModal()"></app-barcode-dialog>
+          </div>
+        </td> -->
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
