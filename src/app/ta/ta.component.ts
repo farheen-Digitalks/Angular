@@ -10,6 +10,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './ta.component.css',
 })
 export class TaComponent {
+  yAxisTicks: number[] = [10, 8, 6, 4, 2, 0]; // default values
+  maxCount = 10; // max value for scaling chart bars
+
   users: any[] = [];
   searchTerm: string = '';
   doctors: any[] = [];
@@ -17,7 +20,7 @@ export class TaComponent {
   uhid: any[] = [];
   uhidRecords: any[] = [];
 
-  selectedFilter: string = 'all'; 
+  selectedFilter: string = 'all';
   filteredUhidRecords: any[] = [];
 
   chartData: { doctor: string; count: number }[] = [];
@@ -48,18 +51,20 @@ export class TaComponent {
     this.api.getUhid().subscribe({
       next: (data: any) => {
         this.uhid = data.uhids;
-        // console.log("Data",data);
-        const uhidList = this.uhid.map((item: any) => item._id);
+        // console.log("Data",this.uhid);
+        const uhidList = this.users.map(
+          (item: any) => item.uniqueHealthIdentificationId?._id
+        );
 
         const uhid = this.users.map((item: any) => item);
-        console.log("UHIDS",uhid);
+        console.log('OPD UHIDS', uhid);
 
         this.uhidRecords = uhid.filter((record: any) =>
           uhidList.includes(record.uniqueHealthIdentificationId?._id)
         );
 
         // console.log("Matched records", this.uhidRecords);
-        // console.log("ids", uhidList);
+        console.log('MATCHED ids', uhidList);
         this.filterByTime();
       },
       error: (error: any) => {
@@ -69,6 +74,19 @@ export class TaComponent {
   }
 
   //==> CHART of opd UHID
+  // generateChartData(): void {
+  //   const doctorMap = new Map<string, number>();
+  //   this.filteredUhidRecords.forEach((patient) => {
+  //     const doctor = patient.consulting_Doctor?.name || 'Unknown';
+  //     doctorMap.set(doctor, (doctorMap.get(doctor) || 0) + 1);
+  //   });
+
+  //   this.chartData = Array.from(doctorMap.entries()).map(([doctor, count]) => ({
+  //     doctor,
+  //     count,
+  //   }));
+  // }
+
   generateChartData(): void {
     const doctorMap = new Map<string, number>();
     this.filteredUhidRecords.forEach((patient) => {
@@ -76,11 +94,29 @@ export class TaComponent {
       doctorMap.set(doctor, (doctorMap.get(doctor) || 0) + 1);
     });
 
-    this.chartData = Array.from(doctorMap.entries()).map(([doctor, count]) => ({
-      doctor,
-      count,
-    }));
+    const chartEntries = Array.from(doctorMap.entries()).map(
+      ([doctor, count]) => ({
+        doctor,
+        count,
+      })
+    );
+
+    console.log('Generated Chart Data:', chartEntries); // 👈 Add this
+    
+    this.chartData = chartEntries;
+
+    // Find max count for Y-axis scaling
+    this.maxCount = Math.max(...chartEntries.map((item) => item.count), 10);
+
+    // Generate Y-axis ticks dynamically (e.g., 0 to maxCount)
+    const step = Math.ceil(this.maxCount / 5);
+    this.yAxisTicks = [];
+    for (let i = this.maxCount; i >= 0; i -= step) {
+      this.yAxisTicks.push(i);
+    }
   }
+
+
 
   searchDoctor() {
     if (this.searchTerm.length >= 2) {
@@ -96,10 +132,13 @@ export class TaComponent {
     this.api.getDoctorByFilter(this.searchTerm).subscribe({
       next: (data: any) => {
         // console.log("Doctor",data);
-        this.uhidRecords = this.users.filter((p: any) => //filtering doctor's patient
-          p.consulting_Doctor?.name
-            ?.toLowerCase()
-            .includes(this.searchTerm.trim().toLowerCase())
+        this.uhidRecords = this.users.filter(
+          (
+            p: any //filtering doctor's patient
+          ) =>
+            p.consulting_Doctor?.name
+              ?.toLowerCase()
+              .includes(this.searchTerm.trim().toLowerCase())
         );
 
         // console.log(data);
@@ -128,8 +167,7 @@ export class TaComponent {
     this.getDoctor();
   }
 
-
-  // ==> Generate chart and data on filter date range 
+  // ==> Generate chart and data on filter date range
   filterByTime(): void {
     const now = new Date();
     let fromDate = new Date();
@@ -141,18 +179,18 @@ export class TaComponent {
         return; // skip rest
 
       case 'week':
-        const day = now.getDay(); 
-        const diffToMonday = (day + 6) % 7; 
+        const day = now.getDay();
+        const diffToMonday = (day + 6) % 7;
         fromDate.setDate(now.getDate() - diffToMonday);
         fromDate.setHours(0, 0, 0, 0);
         break;
 
       case 'month':
-        fromDate = new Date(now.getFullYear(), now.getMonth(), 1); 
+        fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
         break;
 
       case 'year':
-        fromDate = new Date(now.getFullYear(), 0, 1); 
+        fromDate = new Date(now.getFullYear(), 0, 1);
         break;
     }
 
