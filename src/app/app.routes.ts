@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { PageComponent } from './page/page.component';
 import { TaComponent } from './ta/ta.component';
-import { UhidComponent } from './uhid/uhid.component';
+import { OpdBillComponent } from './opd-bill/opd-bill.component';
 
 export const routes: Routes = [
   {
@@ -18,9 +18,13 @@ export const routes: Routes = [
         component: TaComponent,
       },
       {
-        path: 'uhid',
-        component: UhidComponent,
+        path: 'opd-bill',
+        component: OpdBillComponent,
       },
+      {
+        path: 'service-wise-collection',
+        loadComponent: () => import('../app/service-wise-collection/service-wise-collection.component').then(m =>m.ServiceWiseCollectionComponent)
+      }
     ],
   },
 ];

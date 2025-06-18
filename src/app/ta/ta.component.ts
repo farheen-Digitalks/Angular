@@ -25,29 +25,32 @@ export class TaComponent {
 
   chartData: { doctor: string; count: number }[] = [];
 
-  constructor(private api: ApiService) {
-    this.api.testApiCall();
-    this.api.getUhid();
-  }
+  constructor(private api: ApiService) {}
 
   ngOnInit(): void {
-    //==> GET all OPD cases
-    this.api.testApiCall().subscribe({
-      next: (data: any) => {
-        // console.log(data);
-        this.users = data.outpatientCases;
-        this.generateChartData();
+    this.getopdcases();
+  }
 
+  getopdcases() {
+    this.api.getOPDcase().subscribe({
+      next: (data: any) => {
+        this.users = data.outpatientCases;
+        
+        this.generateChartData();
+        
         const doctorSet = new Set(
           this.users.map((p: any) => p.consulting_Doctor?.name).filter(Boolean)
         );
         this.doctors = Array.from(doctorSet);
+        this.getuhid();
       },
       error: (error: any) => {
         console.log(error);
       },
     });
+  }
 
+  getuhid() {
     this.api.getUhid().subscribe({
       next: (data: any) => {
         this.uhid = data.uhids;
@@ -57,14 +60,14 @@ export class TaComponent {
         );
 
         const uhid = this.users.map((item: any) => item);
-        console.log('OPD UHIDS', uhid);
+        // console.log('OPD UHIDS', uhid);
 
         this.uhidRecords = uhid.filter((record: any) =>
           uhidList.includes(record.uniqueHealthIdentificationId?._id)
         );
 
-        // console.log("Matched records", this.uhidRecords);
-        console.log('MATCHED ids', uhidList);
+        // console.log('UHID records', this.uhid);
+        // console.log('UHID list', uhidList);
         this.filterByTime();
       },
       error: (error: any) => {
@@ -101,22 +104,18 @@ export class TaComponent {
       })
     );
 
-    console.log('Generated Chart Data:', chartEntries); // 👈 Add this
-    
+    // console.log('Generated Chart Data:', chartEntries);
+
     this.chartData = chartEntries;
 
-    // Find max count for Y-axis scaling
     this.maxCount = Math.max(...chartEntries.map((item) => item.count), 10);
 
-    // Generate Y-axis ticks dynamically (e.g., 0 to maxCount)
     const step = Math.ceil(this.maxCount / 5);
     this.yAxisTicks = [];
     for (let i = this.maxCount; i >= 0; i -= step) {
       this.yAxisTicks.push(i);
     }
   }
-
-
 
   searchDoctor() {
     if (this.searchTerm.length >= 2) {
@@ -132,7 +131,7 @@ export class TaComponent {
     this.api.getDoctorByFilter(this.searchTerm).subscribe({
       next: (data: any) => {
         // console.log("Doctor",data);
-        this.uhidRecords = this.users.filter(
+        this.filteredUhidRecords = this.uhidRecords.filter(
           (
             p: any //filtering doctor's patient
           ) =>
@@ -140,20 +139,7 @@ export class TaComponent {
               ?.toLowerCase()
               .includes(this.searchTerm.trim().toLowerCase())
         );
-
-        // console.log(data);
-        // if (Array.isArray(data) && data.length > 0) {
-        //   const doctor = data[0];
-        //   if (doctor.outpatientcases && Array.isArray(doctor.outpatientcases)) {
-        //     this.users = doctor.outpatientcases;
-        //   } else {
-        //     console.warn('No outpatient cases found.');
-        //     this.users = [];
-        //   }
-        // } else {
-        //   console.warn('No doctor found.');
-        //   this.users = [];
-        // }
+        this.generateChartData();
       },
       error: (error: any) => {
         console.log(error);
@@ -203,6 +189,3 @@ export class TaComponent {
     this.generateChartData();
   }
 }
-
-
-
